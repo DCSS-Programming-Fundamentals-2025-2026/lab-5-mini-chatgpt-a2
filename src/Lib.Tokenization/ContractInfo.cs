@@ -1,4 +1,4 @@
-namespace Lib.Tokenization.Application
+namespace Lib.Tokenization
 {
     public static class ContractInfo
     {
