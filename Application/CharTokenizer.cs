@@ -1,60 +1,42 @@
+using System.Text;
+using Lib.Tokenization.Domain.Entities;
+using Lib.Tokenization.Domain.Interfaces;
+
 namespace Lib.Tokenization.Application
 {
     public class CharTokenizer : ITokenizer
     {
-        private readonly Dictionary<char, int> _charToId;
-        
-        private readonly char[] _idToChar;
+        private readonly Vocabulary<char> _vocabulary;
 
-        public int VocabSize => _idToChar.Length;
+        public int VocabSize => _vocabulary.Count; 
 
-        private CharTokenizer(Dictionary<char, int> charToId, char[] idToChar)
+        internal CharTokenizer(Vocabulary<char> vocabulary)
         {
-            _charToId = charToId;
-            _idToChar = idToChar;
+            _vocabulary = vocabulary;
         }
 
         public static CharTokenizer BuildFromText(string text)
         {
-            var charToId = new Dictionary<char, int>();
-            var uniqueChars = new List<char>();
-
-            char unkChar = ''; 
-            charToId[unkChar] = 0;
-            uniqueChars.Add(unkChar);
-
-            int nextId = 1;
-
-            foreach (char c in text)
+            var vocab = new Vocabulary<char>();
+            
+            if (!string.IsNullOrEmpty(text))
             {
-                if (!charToId.ContainsKey(c))
+                foreach (char c in text)
                 {
-                    charToId[c] = nextId;
-                    uniqueChars.Add(c);
-                    nextId++;
+                    vocab.Add(c);
                 }
             }
-
-            return new CharTokenizer(charToId, uniqueChars.ToArray());
+            return new CharTokenizer(vocab);
         }
 
         public int[] Encode(string text)
         {
-            if (string.IsNullOrEmpty(text)) return new int[0];
+            if (string.IsNullOrEmpty(text)) return Array.Empty<int>();
 
             int[] tokens = new int[text.Length];
             for (int i = 0; i < text.Length; i++)
             {
-                char c = text[i];
-                
-                if (_charToId.TryGetValue(c, out int id))
-                {
-                    tokens[i] = id;
-                }
-                else
-                {
-                    tokens[i] = 0;
-                }
+                tokens[i] = _vocabulary.GetId(text[i]); 
             }
             return tokens;
         }
@@ -62,24 +44,21 @@ namespace Lib.Tokenization.Application
         public string Decode(ReadOnlySpan<int> tokens)
         {
             StringBuilder sb = new StringBuilder(tokens.Length);
-            
             foreach (int token in tokens)
             {
-                if (token >= 0 && token < _idToChar.Length)
-                {
-                    sb.Append(_idToChar[token]);
-                }
-                else
-                {
-                    sb.Append(_idToChar[0]);
-                }
+                sb.Append(_vocabulary.GetItem(token)); 
             }
             return sb.ToString();
         }
 
         public object GetPayloadForCheckpoint()
         {
-            return new { Chars = _idToChar };
+            char[] chars = new char[_vocabulary.Count];
+            for (int i = 0; i < _vocabulary.Count; i++)
+            {
+                chars[i] = _vocabulary.GetItem(i);
+            }
+            return new { Chars = chars };
         }
     }
 }
