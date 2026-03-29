@@ -14,7 +14,7 @@ public class TokenizerFactoryTests
         var originalPayload = original.GetPayloadForCheckpoint();
 
         string json = JsonSerializer.Serialize(originalPayload);
-    git
+    
         JsonElement restoredPayload = JsonDocument.Parse(json).RootElement;
 
         var factory = new WordTokenizerFactory(); 
