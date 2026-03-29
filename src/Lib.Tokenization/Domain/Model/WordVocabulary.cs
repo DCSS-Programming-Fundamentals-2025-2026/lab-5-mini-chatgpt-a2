@@ -1,5 +1,4 @@
-using System;
-namespace Lib.Tokenization.Domain.Entities;
+namespace Lib.Tokenization.Domain.Model;
 
 public class WordVocabulary : Vocabulary<string>
 {

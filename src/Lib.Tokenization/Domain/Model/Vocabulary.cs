@@ -1,7 +1,4 @@
-using System;
-using System.ComponentModel.Design;
-
-namespace  Lib.Tokenization.Domain.Entities;
+namespace  Lib.Tokenization.Domain.Model;
 
 public class Vocabulary<T>
 {

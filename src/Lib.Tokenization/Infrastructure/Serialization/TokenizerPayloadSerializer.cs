@@ -8,8 +8,16 @@ namespace Lib.Tokenization.Infrastructure.Serialization
     {
         public static ITokenizer RestoreTokenizer(string tokenizerKind, JsonElement payload)
         {
-            var factory = new TokenizerFactory();
-            return factory.Create(tokenizerKind, payload);
+            if (tokenizerKind.ToLower() == "char")
+            {
+                return new CharTokenizerFactory().FromPayload(payload);
+            }
+            else if (tokenizerKind.ToLower() == "word")
+            {
+                return new WordTokenizerFactory().FromPayload(payload);
+            }
+            
+            throw new ArgumentException($"Unknown tokenizer type: {tokenizerKind}");
         }
     }
 }
