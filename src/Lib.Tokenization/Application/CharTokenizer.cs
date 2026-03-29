@@ -1,6 +1,6 @@
 using System.Text;
-using Lib.Tokenization.Domain.Entities;
 using Lib.Tokenization.Domain.Interfaces;
+using Lib.Tokenization.Domain.Model;
 
 namespace Lib.Tokenization.Application
 {
